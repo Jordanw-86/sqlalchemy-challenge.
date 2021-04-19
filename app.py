@@ -45,7 +45,7 @@ def welcome():
 
 @app.route("/api/v1.0/precipitation")
 def precipitation():
-    # Create our session (link) from Python to the DB
+    # creating session (link) from Python to the DB
     session = Session(engine)
 
     """Return a list of all Precipitation Data"""
