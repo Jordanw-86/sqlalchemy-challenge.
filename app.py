@@ -134,3 +134,39 @@ def start(start):
 
     # jsonify the result
     return jsonify(t_list)
+
+
+@app.route("/api/v1.0/min_max_avg/<start>/<end>")
+def start_end(start, end):
+    # create session link
+    session = Session(engine)
+
+    """Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start and end dates."""
+
+    # take start and end dates and convert to yyyy-mm-dd format for the query
+    start_dt = dt.datetime.strptime(start, '%Y-%m-%d')
+    end_dt = dt.datetime.strptime(end, "%Y-%m-%d")
+
+    # query data for the start date value
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start_dt).filter(Measurement.date <= end_dt)
+
+    session.close()
+
+    # Create a list to hold results
+    t_list = []
+    for result in results:
+        r = {}
+        r["StartDate"] = start_dt
+        r["EndDate"] = end_dt
+        r["TMIN"] = result[0]
+        r["TAVG"] = result[1]
+        r["TMAX"] = result[2]
+        t_list.append(r)
+
+    # jsonify the result
+    return jsonify(t_list)
+
+
+#run the app
+if __name__ == "__main__":
+    app.run(debug=True)
